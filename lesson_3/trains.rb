@@ -32,7 +32,8 @@ class Route
   end
 
   def remove_stop(station)
-    #Currently removing a stop the train is at ruins the whole thing
+    #Currently removing the station the train is at messes up the algorithm
+    #Do I have to worry about it?
     @stops.delete(station)
   end
 
@@ -42,17 +43,14 @@ class Route
 end
 
 class Train
-  attr_reader :speed, :type, :wagons
+  attr_accessor :speed
+  attr_reader :type, :wagons
 
   def initialize(number, type, wagons)
     @number = number
     @type = type
     @wagons = wagons
     @speed = 0
-  end
-
-  def increase_speed(by)
-    @speed += by
   end
 
   def stop
@@ -77,6 +75,7 @@ class Train
   end
 
   def previous_station
+    #Loops around like a Nokia snake
     near_current(-1)
   end
 
