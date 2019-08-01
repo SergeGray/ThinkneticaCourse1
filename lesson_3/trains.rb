@@ -6,7 +6,7 @@ class Station
     @trains = []
   end
 
-  def how_many(type)
+  def trains_by_type(type)
     @trains.select { |train| train.type == type }
   end
 
@@ -14,43 +14,45 @@ class Station
     @trains << train
   end
 
-
   def send_train(train)
     @trains.delete(train)
   end
 end
 
 class Route
-  def initialize(start, destination)
+  attr_reader :stations
+
+  def initialize(start, *stops, destination)
     @start = start
     @destination = destination
-    @stops = []
+    @stations = [@start] + stops + [@destination]
   end
 
   def add_stop(station)
-    @stops << station
+    @stations.insert(-2, station)
   end
 
   def remove_stop(station)
-    #Currently removing the station the train is at messes up the algorithm
+    #Removing the station the train is at messes up the algorithm
+    #But this method is required
     #Do I have to worry about it?
-    @stops.delete(station)
-  end
-
-  def order
-    [@start] + @stops + [@destination]
+    return if station == @stations.first || station == @stations.last
+    @stations.delete(station)
   end
 end
 
 class Train
-  attr_accessor :speed
-  attr_reader :type, :wagons
+  attr_reader :type, :wagons, :speed
 
   def initialize(number, type, wagons)
     @number = number
     @type = type
     @wagons = wagons
     @speed = 0
+  end
+
+  def increase_speed(by)
+    @speed += by
   end
 
   def stop
@@ -67,39 +69,34 @@ class Train
 
   def assign_route(route)
     @route = route
-    @route.order[0].receive_train(self)
+    @route.stations.first.receive_train(self)
   end
 
   def current_station
-    @route.order.find { |station| station.trains.include? self }   
+    @route.stations.find { |station| station.trains.include?(self) }   
   end
 
   def previous_station
-    #Loops around like a Nokia snake
-    near_current(-1)
+    @route.stations[@route.stations.index(current_station) - 1]
   end
 
   def next_station
-    near_current(1)
+    @route.stations[@route.stations.index(current_station) + 1]
   end
 
-  def move_up
-    n = next_station
+  def move_forward
+    destination = next_station
     #Methods rely on a train being at a station, so using a variable
+    return if next_station.nil?
     current_station.send_train(self)
-    n.receive_train(self)
+    destination.receive_train(self)
   end
 
-  def backtrack
-    p = previous_station
+  def move_back
+    destination = previous_station
     #Ditto
+    return if previous_station == @route.stations.last
     current_station.send_train(self)
-    p.receive_train(self)
-  end
-
-  private
-
-  def near_current(offset)
-    @route.order[@route.order.index(current_station) + offset]
+    destination.receive_train(self)
   end
 end
