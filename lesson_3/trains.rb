@@ -87,7 +87,7 @@ class Train
   def move_forward
     destination = next_station
     #Methods rely on a train being at a station, so using a variable
-    return false if destination.nil?
+    return false unless destination
     current_station.send_train(self)
     destination.receive_train(self)
   end
