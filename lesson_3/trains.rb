@@ -22,27 +22,27 @@ end
 class Route
   attr_reader :stations
 
-  def initialize(start, *stops, destination)
+  def initialize(start, *stations, destination)
     @start = start
     @destination = destination
-    @stations = [@start] + stops + [@destination]
+    @stations = [@start] + stations + [@destination]
   end
 
-  def add_stop(station)
+  def add_station(station)
     @stations.insert(-2, station)
   end
 
-  def remove_stop(station)
-    #Removing the station the train is at messes up the algorithm
-    #But this method is required
-    #Do I have to worry about it?
-    return if station == @stations.first || station == @stations.last
+  def remove_station(station)
+    trains_on_route = station.trains.select { |train| train.route == self }
+    #Don't delete the station if trains on it have this route assigned
+    return false if station == @start || station == @stop
+    return false unless trains_on_route.empty?
     @stations.delete(station)
   end
 end
 
 class Train
-  attr_reader :type, :wagons, :speed
+  attr_reader :type, :wagons, :speed, :route
 
   def initialize(number, type, wagons)
     @number = number
@@ -87,7 +87,7 @@ class Train
   def move_forward
     destination = next_station
     #Methods rely on a train being at a station, so using a variable
-    return if next_station.nil?
+    return false if destination.nil?
     current_station.send_train(self)
     destination.receive_train(self)
   end
@@ -95,7 +95,7 @@ class Train
   def move_back
     destination = previous_station
     #Ditto
-    return if previous_station == @route.stations.last
+    return false if destination == @route.stations.last
     current_station.send_train(self)
     destination.receive_train(self)
   end
