@@ -1,6 +1,6 @@
 shopping_cart = {}
 
-while true
+loop do
   puts "Введите название товара или стоп, чтобы завершить работу."
   entry = gets.chomp
   break if entry == "стоп"
