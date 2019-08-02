@@ -1,5 +1,5 @@
 def triangle_area(base, height)
-  #Triangle area formula
+  # Triangle area formula
   base * height / 2
 end
 

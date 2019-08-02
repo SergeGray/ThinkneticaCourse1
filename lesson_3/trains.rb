@@ -34,7 +34,7 @@ class Route
 
   def remove_station(station)
     trains_on_route = station.trains.select { |train| train.route == self }
-    #Don't delete the station if trains on it have this route assigned
+    # Don't delete the station if trains on it have this route assigned
     return false if station == @start || station == @stop
     return false unless trains_on_route.empty?
     @stations.delete(station)
@@ -86,7 +86,7 @@ class Train
 
   def move_forward
     destination = next_station
-    #Methods rely on a train being at a station, so using a variable
+    # Methods rely on a train being at a station, so using a variable
     return false unless destination
     current_station.send_train(self)
     destination.receive_train(self)
@@ -94,7 +94,7 @@ class Train
 
   def move_back
     destination = previous_station
-    #Ditto
+    # Ditto
     return false if destination == @route.stations.last
     current_station.send_train(self)
     destination.receive_train(self)

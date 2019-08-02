@@ -1,15 +1,15 @@
 def discriminant(a, b, c)
-  #Discriminant formula
+  # Discriminant formula
   b**2 - 4 * a * c
 end
 
 def root(a, b, d)
-  #Root formula
+  # Root formula
   c = Math.sqrt(d)
   if c == 0
     (-b/(2 * a))
   else
-    #The root uses same variable as the discriminant in the formula
+    # The root uses same variable as the discriminant in the formula
     [c, -c].map { |x| (-b + x)/(2 * a) }  
   end
 end

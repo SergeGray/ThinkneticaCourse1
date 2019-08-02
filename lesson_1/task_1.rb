@@ -1,4 +1,4 @@
-#Ideal weight coefficient
+# Ideal weight coefficient
 COEFFICIENT = 110
 
 print "Введите ваше имя: "
