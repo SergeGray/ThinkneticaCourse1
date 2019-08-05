@@ -1,5 +1,5 @@
 class Train
-  attr_reader :wagons, :speed, :route
+  attr_reader :number, :wagons, :speed, :route
 
   def initialize(number)
     @number = number
@@ -36,6 +36,23 @@ class Train
     @route.stations.first.receive_train(self)
   end
 
+  def move_forward
+    destination = next_station
+    return false unless destination
+    current_station.send_train(self)
+    destination.receive_train(self)
+  end
+
+  def move_back
+    destination = previous_station
+    return false if destination == @route.stations.last
+    current_station.send_train(self)
+    destination.receive_train(self)
+  end
+
+  protected
+
+  # Not using any of these outside of this class and its child classes
   def current_station
     @route.stations.find { |station| station.trains.include?(self) }   
   end
@@ -46,22 +63,6 @@ class Train
 
   def next_station
     @route.stations[@route.stations.index(current_station) + 1]
-  end
-
-  def move_forward
-    destination = next_station
-    # Methods rely on a train being at a station, so using a variable
-    return false unless destination
-    current_station.send_train(self)
-    destination.receive_train(self)
-  end
-
-  def move_back
-    destination = previous_station
-    # Ditto
-    return false if destination == @route.stations.last
-    current_station.send_train(self)
-    destination.receive_train(self)
   end
 end
 
