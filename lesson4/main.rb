@@ -15,240 +15,243 @@ class ControlPanel
   end
 
   def main
-    loop do
-      puts "\nВыберите действие:\n\n"\
-           "1: Создать станцию\n\n"\
-           "2: Создать поезд\n\n"\
-           "3: Создать маршрут\n\n"\
-           "4: Дейтсвия со станциями\n\n"\
-           "5: Действия с поездами\n\n"\
-           "6: Действия с маршрутами\n\n"\
-           "0: Выйти из программы\n\n"
-      choice = gets.to_i
+    puts "1. Станции"
+    puts "2. Поезда"
+    puts "3. Маршруты"
+    puts "0. Выйти из программы"
+    choice = gets.to_i
 
-      case choice
-      when 0 then break
-      when 1
-        print "\nВведите название станции: "
-        name = gets.chomp
-        @stations << Station.new(name)
-        puts "\nСтанция #{name} создана."
-
-      when 2
-        puts "\nВыберите тип поезда:\n\n"\
-             "1. Пассажирский\n\n"\
-             "2. Грузовой\n\n"
-        type_choice = gets.to_i
-
-        unless (1..2).include?(type_choice)
-          puts "\nНеверный тип поезда."
-          next
-        end
-
-        print "\nВведите номер поезда: "
-        number = gets.to_i
-
-        case type_choice
-        when 1
-          @trains << PassengerTrain.new(number)
-        when 2
-          @trains << CargoTrain.new(number)
-        else
-          puts "\nНеверный тип поезда. "
-          next
-        end
-
-        puts "\nПоезд №#{number} создан."
-
-      when 3
-        puts "\nВведите номера станций в маршруте по порядку через пробел"\
-             "(минимум 2)"
-        puts stations_with_index
-        route_array = gets.chomp.split.map(&:to_i)
-        stations = route_array.map do |index|
-          @stations[index]
-        end
-        stations.compact!
-
-        if stations.length < 2
-          puts "\nНедостаточно стаций в маршруте."
-          next
-        end
-
-        @routes << Route.new(*stations)
-        puts "\nМаршрут создан."
-
-      when 4
-        puts "\nВыберите станцию:"
-        puts stations_with_index
-        station = @stations[gets.to_i]
-
-        unless station
-          puts "\nНеверная станция."
-          next
-        end
-
-        puts "\nВыберите действие:\n\n"\
-             "1. Показать все поезда\n\n"\
-             "2. Показать пассажирские поезда\n\n"\
-             "3. Показать грузовые поезда\n\n"
-        action_choice = gets.to_i
-
-        unless (1..3).include?(action_choice)
-          puts "\nНеверное действие."
-          next
-        end
-
-        case action_choice
-        when 1 then puts view_trains(station)
-        when 2 then puts view_trains_by_type(station, :passenger)
-        when 3 then puts view_trains_by_type(station, :cargo)
-        end
-
-      when 5
-        puts "\nВыберите поезд:"
-        puts trains_with_index
-        train = @trains[gets.to_i]
-
-        unless train
-          puts "\nНеверный поезд."
-          next
-        end
-
-        puts "Выберите действие:\n\n"\
-             "1. Прикрепить пассажирский вагон\n\n"\
-             "2. Прикрепить товарный вагон\n\n"\
-             "3. Отцепить последний вагон\n\n"\
-             "4. Назначить маршрут\n\n"\
-             "5. Двигаться вперёд\n\n"\
-             "6. Двигаться назад\n\n"
-        action_choice = gets.to_i
-
-        unless (1..6).include?(action_choice)
-          puts "\nНеверное действие."
-          next
-        end
-
-        case action_choice
-        when 1
-          unless train.attach_wagon(PassengerWagon.new)
-            puts "\nНевозможно прикрепить вагон. "\
-                 "Возможно неверный тип поезда, либо ненулевая скорость."
-          else
-            puts "\nВагон прикреплён."
-          end
-
-        when 2
-          unless train.attach_wagon(CargoWagon.new)
-            puts "\nНевозможно прикрепить вагон. "\
-                 "Возможно неверный тип поезда, либо ненулевая скорость."
-          else
-            puts "\nВагон прикреплён."
-          end
-
-        when 3
-          train.detach_wagon
-          puts "\nВагон отцелен."
-
-        when 4
-          puts "\nВыберите маршрут:"
-          puts routes_with_index
-          route = @routes[gets.to_i]
-
-          unless route
-            puts "\nНеверный маршрут."
-            next
-          end
-
-          train.assign_route(route)
-          puts "Маршрут назначен."
-
-        when 5
-          unless train.move_forward
-            puts "\nПоезд уже достиг конца маршрута."
-          else
-            puts "\nПоезд проехал на следующую станцию."
-          end
-
-        when 6
-          unless train.move_back
-            puts "\nПоезд не может двигаться назад."
-          else
-            puts "\nПоезд вернулся на предыдущую станцию."
-          end
-
-        end
-
-      when 6
-        puts "\nВыберите маршрут:"
-        puts routes_with_index
-        route = @routes[gets.to_i]
-
-        unless route
-          puts "\nНеверный маршрут."
-          next
-        end
-
-        puts "\nВыберите действие:\n\n"\
-             "1. Добавить станцию\n\n"\
-             "2. Удалить станцию (кроме первой и последней)\n\n"
-        action_choice = gets.to_i
-
-        unless (1..2).include?(action_choice)
-          puts "\nНеверное действие."
-          next
-        end
-
-        puts "\nВыберите станцию:"
-
-        case action_choice
-        when 1
-          puts stations_with_index
-          station = @stations[gets.to_i]
-
-          unless station
-            puts "\nНеверная станция."
-            next
-          end
-
-          route.add_station(station)
-          puts "\nСтанция #{station.name} добавлена."
-
-        when 2
-          route.stations.each_with_index do |station, index|
-            puts "\n#{index}: #{station.name}\n"
-          end   
-          station = route.stations[gets.to_i]
-
-          unless station
-            puts "\nНеверная станция."
-            next
-          end
-
-          route.remove_station(station)
-          puts "\nСтанция #{station.name} удалена."
-        end
-      end
+    case choice
+    when 0 then abort
+    when 1 then station_options
+    when 2 then train_options
+    when 3 then route_options
     end
+    main    
   end
 
   private
 
+  def station_options
+    puts "1. Создать станцию"
+    puts "2. Действия со станциями"
+    puts "0. Вернуться в главное меню"
+    choice = gets.to_i
+    case choice
+    when 0 then return
+    when 1 then station_create
+    when 2 then station_actions
+    else puts "Неверное действие"
+    end
+    station_options
+  end
+
+  def train_options
+    puts "1. Создать поезд"
+    puts "2. Действия с поездами"
+    puts "0. Вернуться в главное меню"
+    choice = gets.to_i
+    case choice
+    when 0 then return
+    when 1 then train_create
+    when 2 then train_actions
+    else puts "Неверное действие"
+    end
+    train_options
+  end
+
+  def route_options
+    puts "1. Создать маршрут"
+    puts "2. Действия с маршрутами"
+    puts "0. Вернуться в главное меню"
+    choice = gets.to_i
+    case choice
+    when 0 then return
+    when 1 then route_create
+    when 2 then route_actions
+    else puts "Неверное действие"
+    end
+    route_options
+  end
+
+  def station_create
+    print "Введите название станции: "
+    name = gets.chomp
+    @stations << Station.new(name)
+    puts "Станция #{name} создана."
+  end
+
+  def train_create
+    print "Введите номер поезда: "
+    number = gets.to_i
+
+    puts "Выберите тип поезда:"
+    puts "1. Пассажирский"
+    puts "2. Грузовой"
+    type_choice = gets.to_i
+
+    case type_choice
+    when 1 then @trains << PassengerTrain.new(number)
+    when 2 then @trains << CargoTrain.new(number)
+    else 
+      puts "Неверный тип поезда"
+      return
+    end
+
+    puts "Поезд №#{number} создан."
+  end
+
+  def route_create
+    puts "Введите номера станций в маршруте по порядку через пробел"\
+         "(минимум 2)"
+    puts stations_with_index
+    route_array = gets.chomp.split.map(&:to_i)
+    stations = route_array.map do |index|
+      @stations[index]
+    end
+    stations.compact!
+
+    if stations.length < 2
+      puts "Недостаточно стаций в маршруте."
+      return
+    end
+
+    @routes << Route.new(*stations)
+    puts "Маршрут создан."
+  end
+
+  def station_actions(station = nil)
+    unless station
+      puts "Выберите станцию:"
+      station = station_select
+      return unless station
+    end
+
+    puts "Выберите действие:"
+    puts "1. Показать все поезда"
+    puts "2. Показать пассажирские поезда"
+    puts "3. Показать грузовые поезда"
+    puts "0. Вернуться в главное меню"
+    action_choice = gets.to_i
+
+    case action_choice
+    when 0 then main
+    when 1 then puts view_trains(station)
+    when 2 then puts view_trains_by_type(station, :passenger)
+    when 3 then puts view_trains_by_type(station, :cargo)
+    else puts "Неверное действие."
+    end
+    station_actions(station)
+  end
+
+  def train_actions(train = nil)
+    unless train
+      puts "Выберите поезд:"
+      train = train_select
+      return unless train
+    end
+
+    puts "Выберите действие:"
+    puts "1. Прикрепить пассажирский вагон"
+    puts "2. Прикрепить товарный вагон"
+    puts "3. Отцепить последний вагон"
+    puts "4. Назначить маршрут"
+    puts "5. Двигаться вперёд"
+    puts "6. Двигаться назад"
+    puts "0. Вернуться в главное меню"
+    action_choice = gets.to_i
+
+    case action_choice
+    when 0 then main
+    when 1 then try_attach_wagon(train, PassengerWagon.new)
+    when 2 then try_attach_wagon(train, CargoWagon.new)
+    when 3
+      train.detach_wagon
+      puts "Вагон отцелен."
+    when 4
+      puts "Выберите маршрут:"
+      route = route_select
+
+      if route
+        train.assign_route(route)
+        puts "Маршрут назначен."
+      else
+        puts "Неверный маршрут."
+      end
+    when 5
+      unless train.move_forward
+        puts "Поезд уже достиг конца маршрута."
+      else
+        puts "Поезд проехал на следующую станцию."
+      end
+    when 6
+      unless train.move_back
+        puts "\nПоезд не может двигаться назад."
+      else
+        puts "\nПоезд вернулся на предыдущую станцию."
+      end
+    else puts "Неверное действие."
+    end
+    train_actions(train)
+  end
+
+  def route_actions(route = nil)
+    unless route
+      puts "\nВыберите маршрут:"
+      route = route_select
+      return unless route
+    end
+
+    puts "Выберите действие:"
+    puts "1. Добавить станцию"
+    puts "2. Удалить станцию (кроме первой и последней)"
+    puts "0. Вернуться в главное меню"
+    action_choice = gets.to_i
+
+    case action_choice
+    when 0 then main
+    when 1
+      station = station_select
+
+      if route.stations.include?(station)
+        puts "Станция уже есть в маршруте."
+      elsif station
+        route.add_station(station)
+        puts "Станция #{station.name} добавлена."
+      else
+        puts "Неверная станция."
+      end
+    when 2
+      route.stations[1...-1].each_with_index do |station, index|
+        puts "#{index}: #{station.name}"
+      end   
+      station = route.stations[1...-1][gets.to_i]
+
+      if station
+        route.remove_station(station)
+        puts "Станция #{station.name} удалена."
+      else
+        puts "Неверная станция."
+      end
+    end
+    route_actions(route)
+  end
+
   def stations_with_index
     @stations.each_with_index.map do |station, index|
-      "\n#{index}: #{station.name}\n"
+      "#{index}: #{station.name}"
     end
   end
 
   def trains_with_index
     @trains.each_with_index.map do |train, index|
-      "\n#{index}: #{train.number}\n"
+      "#{index}: #{train.number}"
     end
   end
 
   def routes_with_index
     @routes.each_with_index.map do |route, index|
-      "\n#{index}: #{route.stations.map(&:name).join(", ")}\n"
+      "#{index}: #{route.stations.map(&:name).join(", ")}"
     end
   end
 
@@ -263,12 +266,41 @@ class ControlPanel
       train.number
     end
   end
+
+  def try_attach_wagon(train, wagon)
+    unless train.attach_wagon(wagon)
+      puts "Невозможно прикрепить вагон. "\
+           "Возможно неверный тип поезда, либо ненулевая скорость."
+    else
+      puts "Вагон прикреплён."
+    end
+  end
+
+  def station_select
+    puts stations_with_index
+    station = @stations[gets.to_i]
+
+    puts "Неверная станция." unless station
+    station
+  end
+
+  def route_select
+    puts routes_with_index
+    route = @routes[gets.to_i]
+
+    puts "Неверный маршрут." unless route
+    route
+  end
+
+  def train_select
+    puts trains_with_index
+    train = @trains[gets.to_i]
+
+    puts "Неверный поезд." unless train
+    train
+  end
 end
 
 control_panel = ControlPanel.new
 
 control_panel.main
-
-
-
-
