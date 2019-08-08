@@ -301,6 +301,3 @@ class ControlPanel
   end
 end
 
-control_panel = ControlPanel.new
-
-control_panel.main

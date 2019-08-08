@@ -13,7 +13,6 @@ class Route
 
   def remove_station(station)
     trains_on_route = station.trains.select { |train| train.route == self }
-    # Don't delete the station if trains on it have this route assigned
     return false if station == @start || station == @stop
     return false unless trains_on_route.empty?
     @stations.delete(station)

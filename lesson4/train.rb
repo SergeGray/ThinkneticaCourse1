@@ -50,7 +50,7 @@ class Train
     destination.receive_train(self)
   end
 
-  protected
+  private
 
   # Not using any of these outside of this class and its child classes
   def current_station
