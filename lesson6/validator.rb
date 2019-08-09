@@ -5,5 +5,10 @@ module Validator
   rescue ArgumentError
     false
   end
+
+  private
+
+  def validate!
+  end
 end
 
