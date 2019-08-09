@@ -1,5 +1,6 @@
 require_relative 'manufacturer'
 require_relative 'instance_counter'
+require_relative 'validator'
 require_relative 'route'
 require_relative 'station'
 require_relative 'train'
@@ -81,17 +82,19 @@ class ControlPanel
     name = gets.chomp
     @stations << Station.new(name)
     puts "Станция #{name} создана."
+  rescue ArgumentError => error
+    puts "При создании станции возникла ошибка: #{error.message}."
+    retry
   end
 
   def train_create
     print "Введите номер поезда: "
-    number = gets.to_i
+    number = gets.chomp
 
     puts "Выберите тип поезда:"
     puts "1. Пассажирский"
     puts "2. Грузовой"
     type_choice = gets.to_i
-
     case type_choice
     when 1 then @trains << PassengerTrain.new(number)
     when 2 then @trains << CargoTrain.new(number)
@@ -99,8 +102,11 @@ class ControlPanel
       puts "Неверный тип поезда"
       return
     end
-
     puts "Поезд №#{number} создан."
+
+  rescue ArgumentError => error
+    puts "При создании поезда возникла ошибка: #{error.message}."
+    retry
   end
 
   def route_create
@@ -111,15 +117,17 @@ class ControlPanel
     stations = route_array.map do |index|
       @stations[index]
     end
-    stations.compact!
 
     if stations.length < 2
-      puts "Недостаточно стаций в маршруте."
+      puts "Недостаточно станций в маршруте."
       return
     end
 
     @routes << Route.new(*stations)
     puts "Маршрут создан."
+  rescue ArgumentError => error
+    puts "При создании маршрута возникла ошибка: #{error.message}."
+    retry
   end
 
   def station_actions(station = nil)

@@ -1,5 +1,6 @@
 class Station
   include InstanceCounter
+  include Validator
 
   attr_reader :trains, :name
 
@@ -12,6 +13,7 @@ class Station
   def initialize(name)
     @name = name
     @trains = []
+    validate!
     @@stations << self
     register_instance
   end
@@ -26,6 +28,12 @@ class Station
 
   def send_train(train)
     @trains.delete(train)
+  end
+
+  private
+
+  def validate!
+    raise ArgumentError, 'Слишком короткое название' if @name.length < 4
   end
 end
 

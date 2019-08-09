@@ -1,6 +1,9 @@
 class Train
   include Manufacturer
   include InstanceCounter
+  include Validator
+
+  FORMAT = /[a-z|\d]{3}-?[a-z|\d]{2}/
 
   attr_reader :number, :wagons, :speed, :route
 
@@ -14,6 +17,7 @@ class Train
     @number = number
     @wagons = []
     @speed = 0
+    validate!
     @@trains[number] = self
     register_instance
   end
@@ -62,6 +66,12 @@ class Train
   end
 
   private
+
+  def validate!
+    raise ArgumentError, 'Неправильный номер поезда' if @number !~ FORMAT
+    found = self.class.find(@number)   
+    raise ArgumentError, 'Номер поезда занят' if found && found != self
+  end
 
   def current_station
     @route.stations.find { |station| station.trains.include?(self) }   
