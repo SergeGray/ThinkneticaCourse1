@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Wagon
   include Manufacturer
 
@@ -17,4 +19,3 @@ class Wagon
     @type == :passenger
   end
 end
-

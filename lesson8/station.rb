@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Station
   include InstanceCounter
   include Validator
@@ -40,4 +42,3 @@ class Station
     raise ArgumentError, 'Слишком короткое название' if @name.length < 4
   end
 end
-

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Route
   include InstanceCounter
   include Validator
@@ -16,8 +18,9 @@ class Route
 
   def remove_station(station)
     trains_on_route = station.trains.select { |train| train.route == self }
-    return false if station == @start || station == @stop
+    return false if [@start, @stop].include?(station)
     return false unless trains_on_route.empty?
+
     @stations.delete(station)
   end
 
@@ -29,4 +32,3 @@ class Route
     raise ArgumentError, 'Неверные номера станций' if @stations.compact!
   end
 end
-

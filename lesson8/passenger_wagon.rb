@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class PassengerWagon < Wagon
   def initialize(capacity)
     @type = :passenger
@@ -9,4 +11,3 @@ class PassengerWagon < Wagon
     @available -= 1
   end
 end
-

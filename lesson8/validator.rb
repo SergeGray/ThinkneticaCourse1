@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Validator
   def valid?
     validate!
@@ -8,7 +10,5 @@ module Validator
 
   private
 
-  def validate!
-  end
+  def validate!; end
 end
-

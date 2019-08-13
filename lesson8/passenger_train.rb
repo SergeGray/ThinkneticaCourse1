@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class PassengerTrain < Train
   attr_reader :type
 
@@ -10,4 +12,3 @@ class PassengerTrain < Train
     wagon.passenger? ? super : false
   end
 end
-
