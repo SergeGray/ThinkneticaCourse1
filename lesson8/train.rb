@@ -53,28 +53,23 @@ class Train
   end
 
   def assign_route(route)
+    current_station.send_train(self) if @route
     @route = route
     @route.stations.first.receive_train(self)
   end
 
   def move_forward
     return false unless @route
+    return false unless next_station
 
-    destination = next_station
-    return false unless destination
-
-    current_station.send_train(self)
-    destination.receive_train(self)
+    current_station.send_to(self, next_station)
   end
 
   def move_back
     return false unless @route
+    return false if previous_station == @route.stations.last
 
-    destination = previous_station
-    return false if destination == @route.stations.last
-
-    current_station.send_train(self)
-    destination.receive_train(self)
+    current_station.send_to(self, previous_station)
   end
 
   private

@@ -32,6 +32,10 @@ class Station
     @trains.delete(train)
   end
 
+  def send_to(train, station)
+    station.receive_train(send_train(train))
+  end
+
   def each_train
     @trains.each { |train| yield(train) }
   end
