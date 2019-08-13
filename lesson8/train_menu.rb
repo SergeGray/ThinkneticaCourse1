@@ -40,6 +40,7 @@ module TrainMenu
   def train_options
     puts OPTIONS_STR.join("\n")
     choice = gets.to_i
+
     send(TRAIN_OPTIONS[choice] || :train_options)
     train_options
   end
@@ -50,6 +51,7 @@ module TrainMenu
 
     puts ACTIONS_STR.join("\n")
     choice = gets.to_i
+
     send(TRAIN_ACTIONS[choice] || :train_actions, train)
     train_actions(train)
   end

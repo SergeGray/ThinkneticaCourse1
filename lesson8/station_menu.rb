@@ -32,6 +32,7 @@ module StationMenu
   def station_options
     puts OPTIONS_STR.join("\n")
     choice = gets.to_i
+    
     send(STATION_OPTIONS[choice] || :station_options)
     station_options
   end
@@ -42,6 +43,7 @@ module StationMenu
 
     puts ACTIONS_STR.join("\n")
     choice = gets.to_i
+
     send(STATION_ACTIONS[choice] || :station_actions, station)
     station_actions(station)
   end
