@@ -1,7 +1,7 @@
 class PassengerWagon < Wagon
   def initialize(capacity)
     @type = :passenger
-    super(capacity)
+    super
   end
 
   def take_seat

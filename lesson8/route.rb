@@ -4,10 +4,8 @@ class Route
 
   attr_reader :stations
 
-  def initialize(start, *stations, destination)
-    @start = start
-    @destination = destination
-    @stations = [@start] + stations + [@destination] 
+  def initialize(*stations)
+    @start, *@stations, @destination = stations
     validate!
     register_instance
   end
@@ -26,6 +24,7 @@ class Route
   private
 
   def validate!
+    raise ArgumentError, 'Недостаточно станций' unless @destination
     raise ArgumentError, 'Повторяющиеся станции' if @stations.uniq!
     raise ArgumentError, 'Неверные номера станций' if @stations.compact!
   end

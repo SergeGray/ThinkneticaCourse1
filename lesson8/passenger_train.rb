@@ -7,8 +7,7 @@ class PassengerTrain < Train
   end
 
   def attach_wagon(wagon)
-    return false unless wagon.passenger?
-    super
+    wagon.passenger? ? super : false
   end
 end
 
