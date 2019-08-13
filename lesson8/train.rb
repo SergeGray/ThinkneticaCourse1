@@ -58,6 +58,8 @@ class Train
   end
 
   def move_forward
+    return false unless @route
+
     destination = next_station
     return false unless destination
 
@@ -66,6 +68,8 @@ class Train
   end
 
   def move_back
+    return false unless @route
+
     destination = previous_station
     return false if destination == @route.stations.last
 
