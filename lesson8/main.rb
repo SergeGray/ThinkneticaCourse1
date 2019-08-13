@@ -13,25 +13,63 @@ require_relative 'passenger_train'
 require_relative 'passenger_wagon'
 
 class ControlPanel
+  MAIN_MENU = %i[
+    abort
+    station_options
+    train_options
+    route_options
+  ]
+  STATION_OPTIONS = %i[
+    main
+    station_create
+    station_actions
+  ]
+  TRAIN_OPTIONS = %i[
+    main
+    train_create
+    train_actions
+  ]
+  ROUTE_OPTIONS = %i[
+    main
+    route_create
+    route_actions
+  ]
+  STATION_ACTIONS = %i[
+    main
+    view_trains
+    view_trains_by_type
+    view_trains_by_type
+  ]
+  TRAIN_ACTIONS = %i[
+    main
+    attach_passenger
+    attach_cargo
+    detach_wagon
+    all_wagons
+    assign_route
+    forward
+    backward
+  ]
+  ROUTE_ACTIONS = %i[
+    main
+    add_station
+    remove_station
+  ]
+
   def initialize
     @stations = []
     @trains = []
     @routes = []
   end
 
-  def main
+  def main(*)
     puts '1. Станции'
     puts '2. Поезда'
     puts '3. Маршруты'
     puts '0. Выйти из программы'
     choice = gets.to_i
 
-    case choice
-    when 0 then abort
-    when 1 then station_options
-    when 2 then train_options
-    when 3 then route_options
-    end
+    send(MAIN_MENU[choice] || :main)
     main
   end
 
@@ -42,12 +80,8 @@ class ControlPanel
     puts '2. Действия со станциями'
     puts '0. Вернуться в главное меню'
     choice = gets.to_i
-    case choice
-    when 0 then return
-    when 1 then station_create
-    when 2 then station_actions
-    else puts 'Неверное действие'
-    end
+
+    send(STATION_OPTIONS[choice] || :station_options)
     station_options
   end
 
@@ -56,12 +90,8 @@ class ControlPanel
     puts '2. Действия с поездами'
     puts '0. Вернуться в главное меню'
     choice = gets.to_i
-    case choice
-    when 0 then return
-    when 1 then train_create
-    when 2 then train_actions
-    else puts 'Неверное действие'
-    end
+
+    send(TRAIN_OPTIONS[choice] || :train_options)
     train_options
   end
 
@@ -70,12 +100,8 @@ class ControlPanel
     puts '2. Действия с маршрутами'
     puts '0. Вернуться в главное меню'
     choice = gets.to_i
-    case choice
-    when 0 then return
-    when 1 then route_create
-    when 2 then route_actions
-    else puts 'Неверное действие'
-    end
+
+    send(ROUTE_OPTIONS[choice] || :route_options)
     route_options
   end
 
@@ -88,15 +114,9 @@ class ControlPanel
     puts '2. Показать пассажирские поезда'
     puts '3. Показать грузовые поезда'
     puts '0. Вернуться в главное меню'
-    action_choice = gets.to_i
+    choice = gets.to_i
 
-    case action_choice
-    when 0 then main
-    when 1 then puts view_trains(station)
-    when 2 then puts view_trains_by_type(station, :passenger)
-    when 3 then puts view_trains_by_type(station, :cargo)
-    else puts 'Неверное действие.'
-    end
+    send(STATION_ACTIONS[choice] || :station_actions, station)
     station_actions(station)
   end
 
@@ -113,19 +133,9 @@ class ControlPanel
     puts '6. Двигаться вперёд'
     puts '7. Двигаться назад'
     puts '0. Вернуться в главное меню'
-    action_choice = gets.to_i
+    choice = gets.to_i
 
-    case action_choice
-    when 0 then main
-    when 1 then attach_passenger(train)
-    when 2 then attach_cargo(train)
-    when 3 then detach_wagon(train)
-    when 4 then all_wagons(train)
-    when 5 then assign_route(train)
-    when 6 then forward(train)
-    when 7 then backward(train)
-    else puts 'Неверное действие.'
-    end
+    send(TRAIN_ACTIONS[choice] || :train_actions, train)
     train_actions(train)
   end
 
@@ -137,14 +147,9 @@ class ControlPanel
     puts '1. Добавить станцию'
     puts '2. Удалить станцию (кроме первой и последней)'
     puts '0. Вернуться в главное меню'
-    action_choice = gets.to_i
+    choice = gets.to_i
 
-    case action_choice
-    when 0 then main
-    when 1 then add_station(route)
-    when 2 then remove_station(route)
-    else puts 'Неверное действие.'
-    end
+    send(ROUTE_ACTIONS[choice] || :route_actions, route)
     route_actions(route)
   end
 
@@ -161,18 +166,7 @@ class ControlPanel
   def train_create
     print 'Введите номер поезда: '
     number = gets.chomp
-    puts 'Выберите тип поезда:'
-    puts '1. Пассажирский'
-    puts '2. Грузовой'
-    type_choice = gets.to_i
-    case type_choice
-    when 1 then @trains << PassengerTrain.new(number)
-    when 2 then @trains << CargoTrain.new(number)
-    else
-      puts 'Неверный тип поезда'
-      return
-    end
-    puts "Поезд №#{number} создан."
+    choose_type(number)
   rescue ArgumentError => e
     puts "При создании поезда возникла ошибка: #{e.message}."
     retry
@@ -216,10 +210,29 @@ class ControlPanel
     end
   end
 
+  def view_passenger_trains(station)
+    view_trains_by_type(station, :passenger)
+  end
+
+  def view_cargo_trains(station)
+    view_trains_by_type(station, :cargo)
+  end
+
   def view_trains_by_type(station, type)
     station.trains_by_type(type).map do |train|
       "#{train.number}: #{train.wagons.length} вагонов"
     end
+  end
+
+  def choose_type(number)
+    puts 'Выберите тип поезда:'
+    puts '1. Пассажирский'
+    puts '2. Грузовой'
+    choice = gets.to_i
+    type = { 1 => :passenger, 2 => :cargo }[choice]
+    @trains << PassengerTrain.new(number) if type == :passenger
+    @trains << CargoTrain.new(number) if type == :cargo
+    puts type ? "Поезд №#{number} создан." : 'Неверный тип поезда'
   end
 
   def attach_passenger(train)
