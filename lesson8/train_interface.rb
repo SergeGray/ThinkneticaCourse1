@@ -1,6 +1,12 @@
 # frozen_string_literal: true
 
 module TrainInterface
+  TYPE_STR = [
+    'Выберите тип поезда:',
+    '1. Пассажирский',
+    '2. Грузовой'
+  ].freeze
+
   private
 
   def train_create
@@ -19,9 +25,7 @@ module TrainInterface
   end
 
   def choose_type(number)
-    puts 'Выберите тип поезда:'
-    puts '1. Пассажирский'
-    puts '2. Грузовой'
+    puts TYPE_STR.join("\n")
     choice = gets.to_i
     type = { 1 => :passenger, 2 => :cargo }[choice]
     @trains << PassengerTrain.new(number) if type == :passenger

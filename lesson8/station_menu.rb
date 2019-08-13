@@ -32,7 +32,7 @@ module StationMenu
   def station_options
     puts OPTIONS_STR.join("\n")
     choice = gets.to_i
-    
+
     send(STATION_OPTIONS[choice] || :station_options)
     station_options
   end
