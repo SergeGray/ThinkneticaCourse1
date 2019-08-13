@@ -86,9 +86,8 @@ module TrainInterface
   def choose_type(number)
     puts TYPE_STR.join("\n")
     choice = gets.to_i
-    type = { 1 => :passenger, 2 => :cargo }[choice]
-    @trains << PassengerTrain.new(number) if type == :passenger
-    @trains << CargoTrain.new(number) if type == :cargo
+    type = { 1 => PassengerTrain, 2 => CargoTrain }[choice]
+    @trains << type.new(number) if type
     puts type ? "Поезд №#{number} создан." : 'Неверный тип поезда'
   end
 
@@ -96,9 +95,8 @@ module TrainInterface
     if train.attach_wagon(wagon)
       puts 'Вагон прикреплён.'
     else
-      puts 'Невозможно прикрепить вагон. '\
-           'Возможно неверный тип поезда, либо ненулевая скорость.'
-    end
+      puts 'Невозможно прикрепить вагон.'
+    end 
   end
 
   def trains_with_index
