@@ -11,7 +11,7 @@ class ControlPanel
   include RouteInterface
 
   MAIN_MENU = %i[
-    abort
+    stop
     station_options
     train_options
     route_options
@@ -32,7 +32,11 @@ class ControlPanel
   def main(*)
     puts MENU_STR.join("\n")
     choice = gets.to_i
-    send(MAIN_MENU[choice] || :main)
+    public_send(MAIN_MENU[choice] || :main)
     main
+  end
+
+  def stop
+    abort
   end
 end

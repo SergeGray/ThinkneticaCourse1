@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 module RouteInterface
-  private
-
   def route_create
     puts 'Введите номера станций в маршруте по порядку через пробел'\
          '(минимум 2)'
@@ -16,10 +14,13 @@ module RouteInterface
     retry
   end
 
-  def routes_with_index
-    @routes.each_with_index.map do |route, index|
-      "#{index}: #{route.stations.map(&:name).join(', ')}"
-    end
+  def route_select
+    puts 'Выберите маршрут:'
+    puts routes_with_index
+    route = @routes[gets.to_i]
+
+    puts 'Неверный маршрут.' unless route
+    route
   end
 
   def add_station(route)
@@ -49,12 +50,11 @@ module RouteInterface
     end
   end
 
-  def route_select
-    puts 'Выберите маршрут:'
-    puts routes_with_index
-    route = @routes[gets.to_i]
+  private
 
-    puts 'Неверный маршрут.' unless route
-    route
+  def routes_with_index
+    @routes.each_with_index.map do |route, index|
+      "#{index}: #{route.stations.map(&:name).join(', ')}"
+    end
   end
 end

@@ -7,8 +7,6 @@ module TrainInterface
     '2. Грузовой'
   ].freeze
 
-  private
-
   def train_create
     print 'Введите номер поезда: '
     number = gets.chomp
@@ -18,19 +16,13 @@ module TrainInterface
     retry
   end
 
-  def trains_with_index
-    @trains.each_with_index.map do |train, index|
-      "#{index}: #{train.number}"
-    end
-  end
+  def train_select
+    puts 'Выберите поезд:'
+    puts trains_with_index
+    train = @trains[gets.to_i]
 
-  def choose_type(number)
-    puts TYPE_STR.join("\n")
-    choice = gets.to_i
-    type = { 1 => :passenger, 2 => :cargo }[choice]
-    @trains << PassengerTrain.new(number) if type == :passenger
-    @trains << CargoTrain.new(number) if type == :cargo
-    puts type ? "Поезд №#{number} создан." : 'Неверный тип поезда'
+    puts 'Неверный поезд.' unless train
+    train
   end
 
   def attach_passenger(train)
@@ -43,15 +35,6 @@ module TrainInterface
     puts 'Укажите грузовой объём вагона'
     capacity = gets.to_f
     try_attach_wagon(train, CargoWagon.new(capacity))
-  end
-
-  def try_attach_wagon(train, wagon)
-    if train.attach_wagon(wagon)
-      puts 'Вагон прикреплён.'
-    else
-      puts 'Невозможно прикрепить вагон. '\
-           'Возможно неверный тип поезда, либо ненулевая скорость.'
-    end
   end
 
   def detach_wagon(train)
@@ -98,12 +81,29 @@ module TrainInterface
     end
   end
 
-  def train_select
-    puts 'Выберите поезд:'
-    puts trains_with_index
-    train = @trains[gets.to_i]
+  private
 
-    puts 'Неверный поезд.' unless train
-    train
+  def choose_type(number)
+    puts TYPE_STR.join("\n")
+    choice = gets.to_i
+    type = { 1 => :passenger, 2 => :cargo }[choice]
+    @trains << PassengerTrain.new(number) if type == :passenger
+    @trains << CargoTrain.new(number) if type == :cargo
+    puts type ? "Поезд №#{number} создан." : 'Неверный тип поезда'
+  end
+
+  def try_attach_wagon(train, wagon)
+    if train.attach_wagon(wagon)
+      puts 'Вагон прикреплён.'
+    else
+      puts 'Невозможно прикрепить вагон. '\
+           'Возможно неверный тип поезда, либо ненулевая скорость.'
+    end
+  end
+
+  def trains_with_index
+    @trains.each_with_index.map do |train, index|
+      "#{index}: #{train.number}"
+    end
   end
 end

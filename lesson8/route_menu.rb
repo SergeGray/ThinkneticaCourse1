@@ -25,13 +25,11 @@ module RouteMenu
 
   def main(*); end
 
-  private
-
   def route_options
     puts OPTIONS_STR.join("\n")
     choice = gets.to_i
 
-    send(ROUTE_OPTIONS[choice] || :route_options)
+    public_send(ROUTE_OPTIONS[choice] || :route_options)
     route_options
   end
 
@@ -42,7 +40,7 @@ module RouteMenu
     puts ACTIONS_STR.join("\n")
     choice = gets.to_i
 
-    send(ROUTE_ACTIONS[choice] || :route_actions, route)
+    public_send(ROUTE_ACTIONS[choice] || :route_actions, route)
     route_actions(route)
   end
 end

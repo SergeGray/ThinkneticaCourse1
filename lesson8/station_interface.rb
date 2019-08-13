@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 module StationInterface
-  private
-
   def station_create
     print 'Введите название станции: '
     name = gets.chomp
@@ -13,10 +11,13 @@ module StationInterface
     retry
   end
 
-  def stations_with_index
-    @stations.each_with_index.map do |station, index|
-      "#{index}: #{station.name}"
-    end
+  def station_select
+    puts 'Выберите станцию:'
+    puts stations_with_index
+    station = @stations[gets.to_i]
+
+    puts 'Неверная станция.' unless station
+    station
   end
 
   def view_trains(station)
@@ -34,18 +35,17 @@ module StationInterface
     view_trains_by_type(station, :cargo)
   end
 
+  private
+
   def view_trains_by_type(station, type)
     station.trains_by_type(type).map do |train|
       "#{train.number}: #{train.wagons.length} вагонов"
     end
   end
 
-  def station_select
-    puts 'Выберите станцию:'
-    puts stations_with_index
-    station = @stations[gets.to_i]
-
-    puts 'Неверная станция.' unless station
-    station
+  def stations_with_index
+    @stations.each_with_index.map do |station, index|
+      "#{index}: #{station.name}"
+    end
   end
 end
