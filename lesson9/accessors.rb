@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Accessors
   def attr_accessor_with_history(*names)
     names.each do |name|
@@ -24,14 +26,15 @@ module Accessors
   def history_writer(name, var_name, var_history)
     define_method("#{name}=".to_sym) do |value|
       instance_variable_set(var_name, value)
-      history = instance_variable_get(var_history)
-      instance_variable_set(var_history, (history ||= []) << value)
+      history = instance_variable_get(var_history) || []
+      history << value
+      instance_variable_set(var_history, history)
     end
   end
 
   def strong_writer(name, var_name, type)
     define_method("#{name}=".to_sym) do |value|
-      raise ArgumentError, "wrong variable class" if value.class != type
+      raise ArgumentError, 'wrong variable class' if value.class != type
 
       instance_variable_set(var_name, value)
     end
@@ -43,4 +46,3 @@ module Accessors
     end
   end
 end
-
