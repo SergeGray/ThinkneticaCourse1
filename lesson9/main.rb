@@ -30,7 +30,7 @@ class ControlPanel
   end
 
   def main(*)
-    puts MENU_STR.join("\n")
+    puts MENU_STR
     choice = gets.to_i
     public_send(MAIN_MENU[choice] || :main)
     main

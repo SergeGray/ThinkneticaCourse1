@@ -96,7 +96,7 @@ module TrainInterface
       puts 'Вагон прикреплён.'
     else
       puts 'Невозможно прикрепить вагон.'
-    end 
+    end
   end
 
   def trains_with_index

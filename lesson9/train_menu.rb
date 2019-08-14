@@ -36,7 +36,7 @@ module TrainMenu
   def main(*); end
 
   def train_options
-    puts OPTIONS_STR.join("\n")
+    puts OPTIONS_STR
     choice = gets.to_i
 
     public_send(TRAIN_OPTIONS[choice] || :train_options)
@@ -47,7 +47,7 @@ module TrainMenu
     train ||= train_select
     return unless train
 
-    puts ACTIONS_STR.join("\n")
+    puts ACTIONS_STR
     choice = gets.to_i
 
     public_send(TRAIN_ACTIONS[choice] || :train_actions, train)

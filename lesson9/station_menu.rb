@@ -28,7 +28,7 @@ module StationMenu
   def main(*); end
 
   def station_options
-    puts OPTIONS_STR.join("\n")
+    puts OPTIONS_STR
     choice = gets.to_i
 
     public_send(STATION_OPTIONS[choice] || :station_options)
@@ -39,7 +39,7 @@ module StationMenu
     station ||= station_select
     return unless station
 
-    puts ACTIONS_STR.join("\n")
+    puts ACTIONS_STR
     choice = gets.to_i
 
     public_send(STATION_ACTIONS[choice] || :station_actions, station)

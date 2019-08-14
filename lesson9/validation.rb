@@ -24,7 +24,7 @@ module Validation
       validations.each do |var_name, validation|
         validation.each do |command, param|
           send command, var_name, param
-        end          
+        end
       end
     end
 

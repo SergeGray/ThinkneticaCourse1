@@ -26,7 +26,7 @@ module RouteMenu
   def main(*); end
 
   def route_options
-    puts OPTIONS_STR.join("\n")
+    puts OPTIONS_STR
     choice = gets.to_i
 
     public_send(ROUTE_OPTIONS[choice] || :route_options)
@@ -37,7 +37,7 @@ module RouteMenu
     route ||= route_select
     return unless route
 
-    puts ACTIONS_STR.join("\n")
+    puts ACTIONS_STR
     choice = gets.to_i
 
     public_send(ROUTE_ACTIONS[choice] || :route_actions, route)
